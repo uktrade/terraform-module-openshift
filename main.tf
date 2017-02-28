@@ -81,7 +81,7 @@ resource "aws_s3_bucket" "datastore" {
 }
 
 data "template_file" "datastore-policy" {
-  template = "${file("${path.module}/policies/s3-template.json")}"
+  template = "${file("${path.module}/policies/s3-policy.json")}"
 
   vars {
     s3 = "${aws_s3_bucket.datastore.id}"
