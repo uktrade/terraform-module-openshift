@@ -3,7 +3,7 @@ resource "aws_ecr_repository" "registry" {
 }
 
 data "template_file" "registry-policy" {
-  template = "${file("policies/ecr-policy.json")}"
+  template = "${file("${path.module}/policies/ecr-policy.json")}"
 
   vars {
     role = "${aws_iam_role.node-role.arn}"

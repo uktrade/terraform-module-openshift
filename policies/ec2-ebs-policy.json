@@ -1,0 +1,17 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Action": [
+      "ec2:*Volume*",
+      "ec2:*Snapshot*",
+      "ec2:*Tag"
+    ],
+    "Resource": ["*"],
+    "Condition": {
+      "StringEquals": {
+        "ec2:vpc": "arn:aws:ec2:${region}:${account}:vpc/${vpc}"
+      }
+    }
+  }]
+}

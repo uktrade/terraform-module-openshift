@@ -35,12 +35,12 @@ data "aws_ami" "default" {
 
 resource "aws_iam_role" "node-role" {
   name = "${var.openshift["domain"]}-openshift-role"
-  assume_role_policy = "${file("policies/default-role.json")}"
+  assume_role_policy = "${file("${path.module}/policies/default-role.json")}"
 }
 
 resource "aws_iam_role_policy" "node-default-policy" {
-  name = "${var.openshift["domain"]}-openshift-role-default-policy"
-  policy = "${file("policies/default-policy.json")}"
+  name = "${var.openshift["domain"]}-openshift-default-policy"
+  policy = "${file("${path.module}/policies/default-policy.json")}"
   role = "${aws_iam_role.node-role.id}"
 }
 
@@ -55,7 +55,7 @@ data "template_file" "node-ebs-policy" {
 }
 
 resource "aws_iam_role_policy" "node-ebs-policy" {
-  name = "${var.openshift["domain"]}-openshift-role-policy"
+  name = "${var.openshift["domain"]}-openshift-ebs-policy"
   policy = "${data.template_file.node-ebs-policy.rendered}"
   role = "${aws_iam_role.node-role.id}"
 }
@@ -80,8 +80,22 @@ resource "aws_s3_bucket" "datastore" {
     }
 }
 
+data "template_file" "datastore-policy" {
+  template = "${file("${path.module}/policies/s3-template.json")}"
+
+  vars {
+    s3 = "${aws_s3_bucket.datastore.id}"
+  }
+}
+
+resource "aws_iam_role_policy" "datastore-policy" {
+  name = "${var.openshift["domain"]}-openshift-datastore-policy"
+  policy = "${data.template_file.datastore-policy.rendered}"
+  role = "${aws_iam_role.node-role.id}"
+}
+
 data "template_file" "route53_policy" {
-  template = "${file("policies/route53-policy.json")}"
+  template = "${file("${path.module}/policies/route53-policy.json")}"
 
   vars {
     zone_id = "${var.vpc_conf["zone_id"]}"
@@ -89,7 +103,7 @@ data "template_file" "route53_policy" {
 }
 
 resource "aws_iam_role_policy" "route53" {
-  name = "${var.openshift["domain"]}-openshift-role-route53-policy"
+  name = "${var.openshift["domain"]}-openshift-route53-policy"
   policy = "${data.template_file.route53_policy.rendered}"
   role = "${aws_iam_role.node-role.name}"
 }
