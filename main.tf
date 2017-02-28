@@ -45,7 +45,7 @@ resource "aws_iam_role_policy" "node-default-policy" {
 }
 
 data "template_file" "node-ebs-policy" {
-  template = "${file("policies/ec2-ebs-policy.json")}"
+  template = "${file("${path.module}/policies/ec2-ebs-policy.json")}"
 
   vars {
     region = "${var.vpc_conf["region"]}"
