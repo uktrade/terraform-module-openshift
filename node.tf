@@ -71,6 +71,16 @@ resource "aws_autoscaling_group" "node" {
     value = "compute"
     propagate_at_launch = true
   }
+  tag {
+    key = "region"
+    value = "${var.vpc_conf["region"]}"
+    propagate_at_launch = true
+  }
+  tag {
+    key = "svc"
+    value = "node"
+    propagate_at_launch = true
+  }
   lifecycle {
     create_before_destroy = true
   }
