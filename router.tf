@@ -1,5 +1,5 @@
 data "template_file" "router-cloudinit" {
-  template = "${file("./modules/openshift-cluster/router-cloudinit.yml")}"
+  template = "${file("${path.module}/router-cloudinit.yml")}"
 
   vars {
     openshift_url = "${var.openshift["url"]}"
