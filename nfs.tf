@@ -11,8 +11,8 @@ data "template_file" "nfs-cloudinit" {
 }
 
 resource "aws_ebs_volume" "nfs" {
-  count = "${length(split(",", var.vpc_conf["availability_zones"]))}"
-  availability_zone = "${element(split(",", var.vpc_conf["availability_zones"]), count.index)}"
+  count = "${length(split(",", var.aws_conf["availability_zones"]))}"
+  availability_zone = "${element(split(",", var.aws_conf["availability_zones"]), count.index)}"
   type = "io1"
   size = 500
   iops = 20000
