@@ -20,44 +20,14 @@ resource "aws_ebs_volume" "nfs" {
   kms_key_id = "${var.vpc_conf["kms"]}"
 
   tag {
-    key = "Name"
-    value = "${var.openshift["domain"]}-nfs"
-    propagate_at_launch = true
-  }
-  tag {
-    key = "Stack"
-    value = "${var.openshift["domain"]}"
-    propagate_at_launch = true
-  }
-  tag {
-    key = "clusterid"
-    value = "${var.openshift["domain"]}"
-    propagate_at_launch = true
-  }
-  tag {
-    key = "environment"
-    value = "${var.openshift["environment"]}"
-    propagate_at_launch = true
-  }
-  tag {
-    key = "host-type"
-    value = "nfs"
-    propagate_at_launch = true
-  }
-  tag {
-    key = "sub-host-type"
-    value = "infra"
-    propagate_at_launch = true
-  }
-  tag {
-    key = "region"
-    value = "${var.vpc_conf["region"]}"
-    propagate_at_launch = true
-  }
-  tag {
-    key = "svc"
-    value = "nfs"
-    propagate_at_launch = true
+    Name = "${var.openshift["domain"]}-nfs"
+    Stack = "${var.openshift["domain"]}"
+    clusterid = "${var.openshift["domain"]}"
+    environment = "${var.openshift["environment"]}"
+    host-type = "nfs"
+    sub-host-type = "infra"
+    region = "${var.vpc_conf["region"]}"
+    svc = "nfs"
   }
 
   lifecycle {
