@@ -49,7 +49,8 @@ runcmd:
 - AWS_AZ=$(curl -Lfs http://169.254.169.254/latest/meta-data/placement/availability-zone)
 - INSTANCE_ID=$(curl -Lfs http://169.254.169.254/latest/meta-data/instance-id)
 - NFS_EBS_VOLUME=$(aws ec2 describe-volumes --filters Name=availability-zone,Values=$AWS_AZ,Name=status,Values=available,Name=tag:clusterid,Values=${cluster_id},Name=tag:environment,Values=${cluster_env},Name=tag:host-type,Values=nfs | jq -r '.Volumes[].VolumeId')
-- [ $(grep -c -E vol-[0-9a-z]\{17\} <<< $NFS_EBS_VOLUME) = 1 ] && aws ec2 attach-volume --instance-id $INSTANCE_ID --volume-id $NFS_EBS_VOLUME --device /dev/xvdx
+- >
+  [ $(grep -c -E vol-[0-9a-z]\{17\} <<< $NFS_EBS_VOLUME) = 1 ] && aws ec2 attach-volume --instance-id $INSTANCE_ID --volume-id $NFS_EBS_VOLUME --device /dev/xvdx
 - mkdir -p /exports
 - mount /dev/xvdx /exports
 
