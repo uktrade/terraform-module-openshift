@@ -1,5 +1,5 @@
 data "template_file" "etcd-cloudinit" {
-  template = "${file("${path.module}/etcd-cloudinit.yml")}"
+  template = "${file("${path.module}/node-cloudinit.yml")}"
 
   vars {
     openshift_url = "${var.openshift["url"]}"
