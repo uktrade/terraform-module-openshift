@@ -19,7 +19,7 @@ resource "aws_ebs_volume" "nfs" {
   encrypted = true
   kms_key_id = "${var.vpc_conf["kms"]}"
 
-  tag {
+  tags {
     Name = "${var.openshift["domain"]}-nfs"
     Stack = "${var.openshift["domain"]}"
     clusterid = "${var.openshift["domain"]}"
