@@ -59,6 +59,11 @@ resource "aws_autoscaling_group" "router" {
     propagate_at_launch = true
   }
   tag {
+    key = "KubernetesCluster"
+    value = "${var.openshift["domain"]}"
+    propagate_at_launch = true
+  }
+  tag {
     key = "environment"
     value = "${var.openshift["environment"]}"
     propagate_at_launch = true
