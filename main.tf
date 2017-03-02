@@ -107,3 +107,23 @@ resource "aws_iam_role_policy" "route53" {
   policy = "${data.template_file.route53_policy.rendered}"
   role = "${aws_iam_role.node-role.name}"
 }
+
+resource "aws_kms_key" "ebs" {
+  description = "${var.openshift["domain"]} NFS EBS Key"
+}
+
+data "template_file" "role-kms" {
+  template = "${file("${path.module}/policies/role-kms-policy.json")}"
+
+  vars {
+    aws_region = "${var.aws_conf["region"]}"
+    aws_account_id = "${var.aws_conf["account_id"]}"
+    ebs_kms_arn = "${aws_kms_key.ebs.arn}"
+  }
+}
+
+resource "aws_iam_role_policy" "role-kms-policy" {
+  name = "${var.openshift["domain"]}-openshift-kms-policy"
+  policy = "${data.template_file.role-kms.rendered}"
+  role = "${aws_iam_role.node-role.id}"
+}

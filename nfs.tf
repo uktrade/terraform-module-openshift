@@ -17,7 +17,7 @@ resource "aws_ebs_volume" "nfs" {
   size = 500
   iops = 20000
   encrypted = true
-  kms_key_id = "${var.vpc_conf["kms"]}"
+  kms_key_id = "${aws_kms_key.ebs.arn}"
 
   tags {
     Name = "${var.openshift["domain"]}-nfs"
