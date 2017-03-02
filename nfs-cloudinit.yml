@@ -63,11 +63,11 @@ power_state:
   mode: poweroff
   message: Bootstrap failed, terminating instance.
   timeout: 30
-  condition: 1
+  condition: False
 
 power_state:
   delay: "+10"
   mode: reboot
   message: Bootstrap success, reboot instance.
   timeout: 30
-  condition: 0
+  condition: True
