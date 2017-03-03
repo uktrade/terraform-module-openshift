@@ -80,7 +80,7 @@ resource "aws_autoscaling_group" "etcd" {
   }
   tag {
     key = "region"
-    value = "${var.vpc_conf["region"]}"
+    value = "infra"
     propagate_at_launch = true
   }
   tag {

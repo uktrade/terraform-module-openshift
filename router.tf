@@ -70,17 +70,17 @@ resource "aws_autoscaling_group" "router" {
   }
   tag {
     key = "host-type"
-    value = "lb"
+    value = "node"
     propagate_at_launch = true
   }
   tag {
     key = "sub-host-type"
-    value = "infra"
+    value = "compute"
     propagate_at_launch = true
   }
   tag {
     key = "region"
-    value = "${var.vpc_conf["region"]}"
+    value = "primary"
     propagate_at_launch = true
   }
   tag {

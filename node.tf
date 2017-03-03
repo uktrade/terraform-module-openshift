@@ -78,7 +78,7 @@ resource "aws_autoscaling_group" "node" {
   }
   tag {
     key = "region"
-    value = "${var.vpc_conf["region"]}"
+    value = "primary"
     propagate_at_launch = true
   }
   tag {
