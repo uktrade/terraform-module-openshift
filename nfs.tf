@@ -1,3 +1,10 @@
+variable "nfs-subnets" {
+  default = {
+    "true" = "private"
+    "false" = "public"
+  }
+}
+
 data "template_file" "nfs-cloudinit" {
   template = "${file("${path.module}/nfs-cloudinit.yml")}"
 
@@ -22,7 +29,7 @@ data "aws_subnet" "nfs_az" {
   vpc_id = "${var.vpc_conf["id"]}"
   availability_zone = "${random_shuffle.nfs_az.result.0}"
   tags {
-    Type = "public"
+    Type = "${lookup(var.nfs-subnets, var.openshift["internal"])}"
   }
 }
 

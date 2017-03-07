@@ -36,7 +36,7 @@ resource "aws_launch_configuration" "etcd" {
 resource "aws_autoscaling_group" "etcd" {
   name = "${var.openshift["domain"]}-etcd"
   launch_configuration = "${aws_launch_configuration.etcd.name}"
-  vpc_zone_identifier = ["${split(",", var.vpc_conf["subnets_public"])}"]
+  vpc_zone_identifier = ["${split(",", var.vpc_conf[lookup(var.subnet-type, var.openshift["internal"])])}"]
   min_size = "${var.openshift["master_capacity_min"]}"
   max_size = "${var.openshift["master_capacity_max"]}"
   desired_capacity = "${var.openshift["master_capacity_min"]}"
@@ -147,8 +147,8 @@ resource "aws_security_group" "etcd-elb" {
 }
 
 resource "aws_elb" "etcd" {
-  name = "etcd-elb"
-  subnets = ["${split(",", var.vpc_conf["subnets_public"])}"]
+  name = "${element(split(".", var.openshift["domain"]), 0)}-etcd-elb"
+  subnets = ["${split(",", var.vpc_conf[lookup(var.subnet-type, var.openshift["internal"])])}"]
 
   security_groups = [
     "${var.vpc_conf["security_group"]}",

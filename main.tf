@@ -12,6 +12,13 @@ variable "openshift" {
   default = {}
 }
 
+variable "subnet-type" {
+  default = {
+    "true" = "subnets_private"
+    "false" = "subnets_public"
+  }
+}
+
 data "aws_ami" "default" {
   most_recent = true
   name_regex = "CentOS Linux 7 x86_64 HVM EBS"

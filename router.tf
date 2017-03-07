@@ -36,7 +36,7 @@ resource "aws_launch_configuration" "router" {
 resource "aws_autoscaling_group" "router" {
   name = "${var.openshift["domain"]}-router"
   launch_configuration = "${aws_launch_configuration.router.name}"
-  vpc_zone_identifier = ["${split(",", var.vpc_conf["subnets_public"])}"]
+  vpc_zone_identifier = ["${split(",", var.vpc_conf[lookup(var.subnet-type, var.openshift["internal"])])}"]
   min_size = "${length(split(",", var.vpc_conf["availability_zones"]))}"
   max_size = "${length(split(",", var.vpc_conf["availability_zones"])) * 2}"
   desired_capacity = "${length(split(",", var.vpc_conf["availability_zones"]))}"
@@ -147,8 +147,8 @@ resource "aws_security_group" "router-elb" {
 }
 
 resource "aws_elb" "router" {
-  name = "router-elb"
-  subnets = ["${split(",", var.vpc_conf["subnets_public"])}"]
+  name = "${element(split(".", var.openshift["domain"]), 0)}-router-elb"
+  subnets = ["${split(",", var.vpc_conf[lookup(var.subnet-type, var.openshift["internal"])])}"]
 
   security_groups = [
     "${var.vpc_conf["security_group"]}",

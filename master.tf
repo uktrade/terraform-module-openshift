@@ -36,7 +36,7 @@ resource "aws_launch_configuration" "master" {
 resource "aws_autoscaling_group" "master" {
   name = "${var.openshift["domain"]}-master"
   launch_configuration = "${aws_launch_configuration.master.name}"
-  vpc_zone_identifier = ["${split(",", var.vpc_conf["subnets_public"])}"]
+  vpc_zone_identifier = ["${split(",", var.vpc_conf[lookup(var.subnet-type, var.openshift["internal"])])}"]
   min_size = "${var.openshift["master_capacity_min"]}"
   max_size = "${var.openshift["master_capacity_max"]}"
   desired_capacity = "${var.openshift["master_capacity_min"]}"
@@ -150,8 +150,8 @@ resource "aws_security_group" "master-elb" {
 }
 
 resource "aws_elb" "master" {
-  name = "master-elb"
-  subnets = ["${split(",", var.vpc_conf["subnets_public"])}"]
+  name = "${element(split(".", var.openshift["domain"]), 0)}-master-elb"
+  subnets = ["${split(",", var.vpc_conf[lookup(var.subnet-type, var.openshift["internal"])])}"]
 
   security_groups = [
     "${var.vpc_conf["security_group"]}",
@@ -184,7 +184,7 @@ resource "aws_elb" "master" {
 }
 
 resource "aws_elb" "master-internal" {
-  name = "master-elb-internal"
+  name = "${element(split(".", var.openshift["domain"]), 0)}-master-elb-internal"
   subnets = ["${split(",", var.vpc_conf["subnets_private"])}"]
 
   security_groups = [
