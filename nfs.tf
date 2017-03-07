@@ -10,9 +10,24 @@ data "template_file" "nfs-cloudinit" {
   }
 }
 
+resource "random_shuffle" "nfs_az" {
+  input = ["${split(",", var.vpc_conf["availability_zones"])}"]
+  result_count = 1
+  keepers = {
+    vpc_id = "${var.vpc_conf["id"]}"
+  }
+}
+
+data "aws_subnet" "nfs_az" {
+  vpc_id = "${var.vpc_conf["id"]}"
+  availability_zone = "${random_shuffle.nfs_az.result.0}"
+  tags {
+    Type = "public"
+  }
+}
+
 resource "aws_ebs_volume" "nfs" {
-  count = "${length(split(",", var.aws_conf["availability_zones"]))}"
-  availability_zone = "${element(split(",", var.aws_conf["availability_zones"]), count.index)}"
+  availability_zone = "${random_shuffle.nfs_az.result.0}"
   type = "io1"
   size = 500
   iops = 20000
@@ -63,10 +78,10 @@ resource "aws_launch_configuration" "nfs" {
 resource "aws_autoscaling_group" "nfs" {
   name = "${var.openshift["domain"]}-nfs"
   launch_configuration = "${aws_launch_configuration.nfs.name}"
-  vpc_zone_identifier = ["${split(",", var.vpc_conf["subnets_public"])}"]
-  min_size = "${length(split(",", var.vpc_conf["availability_zones"]))}"
-  max_size = "${length(split(",", var.vpc_conf["availability_zones"]))}"
-  desired_capacity = "${length(split(",", var.vpc_conf["availability_zones"]))}"
+  vpc_zone_identifier = ["${data.aws_subnet.nfs_az.id}"]
+  min_size = 1
+  max_size = 1
+  desired_capacity = 1
   wait_for_capacity_timeout = 0
 
   tag {
