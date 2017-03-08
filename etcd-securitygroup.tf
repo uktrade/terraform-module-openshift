@@ -51,16 +51,17 @@ resource "aws_security_group" "internal-etcd" {
 
   ingress {
     from_port = 0
-    to_port = 80
+    to_port = 2379
     protocol = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    security_groups = ["${aws_security_group.etcd-elb.id}"]
   }
 
   ingress {
     from_port = 0
-    to_port = 443
+    to_port = 2380
     protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    security_groups = ["${aws_security_group.etcd-elb.id}"]
   }
 
   tags {
