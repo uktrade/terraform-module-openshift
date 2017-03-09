@@ -5,6 +5,18 @@ data "template_file" "router-cloudinit" {
     openshift_url = "${var.openshift["url"]}"
     dns_zone_id = "${var.vpc_conf["zone_id"]}"
     aws_region = "${var.vpc_conf["region"]}"
+    ansible_repo = "${var.openshift["ansible_repo"]}"
+    ansible_repo_branch = "${var.openshift["ansible_repo_branch"]}"
+    cluster_id = "${replace(var.openshift["domain"], ".", "_")}"
+    cluster_env = "${var.openshift["environment"]}"
+    openshift_version = "${var.openshift["version"]}"
+    openshift_domain = "${var.openshift["domain"]}"
+    github_org = "${var.openshift["github_org"]}"
+    github_client_id = "${var.openshift["github_client_id"]}"
+    github_client_secret = "${var.openshift["github_client_secret"]}"
+    aws_access_key = "${aws_iam_access_key.node-user.id}"
+    aws_secret_key = "${aws_iam_access_key.node-user.secret}"
+    ssh_key = "${replace(file(var.openshift["ssh_key"]), "\n", "\\n")}"
   }
 }
 
@@ -114,33 +126,6 @@ resource "aws_autoscaling_policy" "router" {
     scaling_adjustment = -1
   }
 
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "aws_security_group" "router-elb" {
-  name = "${var.openshift["domain"]}-router-elb"
-  vpc_id = "${var.vpc_conf["id"]}"
-
-  ingress {
-    from_port = 0
-    to_port = 80
-    protocol = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port = 0
-    to_port = 443
-    protocol = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags {
-    Name = "${var.openshift["domain"]}-router-elb"
-    Stack = "${var.openshift["domain"]}"
-  }
   lifecycle {
     create_before_destroy = true
   }

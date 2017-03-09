@@ -40,9 +40,23 @@ data "aws_ami" "default" {
   }
 }
 
+resource "aws_iam_user" "node-user" {
+    name = "${var.openshift["domain"]}-openshift-user"
+}
+
+resource "aws_iam_access_key" "node-user" {
+  user = "${aws_iam_user.node-user.name}"
+}
+
 resource "aws_iam_role" "node-role" {
   name = "${var.openshift["domain"]}-openshift-role"
   assume_role_policy = "${file("${path.module}/policies/default-role.json")}"
+}
+
+resource "aws_iam_user_policy" "user-default-policy" {
+  name = "${var.openshift["domain"]}-user-default-policy"
+  policy = "${file("${path.module}/policies/default-policy.json")}"
+  user = "${aws_iam_user.node-user.name}"
 }
 
 resource "aws_iam_role_policy" "node-default-policy" {
@@ -59,6 +73,12 @@ data "template_file" "node-ebs-policy" {
     account = "${var.aws_conf["account_id"]}"
     vpc = "${var.vpc_conf["id"]}"
   }
+}
+
+resource "aws_iam_user_policy" "user-ebs-policy" {
+  name = "${var.openshift["domain"]}-user-ebs-policy"
+  policy = "${data.template_file.node-ebs-policy.rendered}"
+  user = "${aws_iam_user.node-user.name}"
 }
 
 resource "aws_iam_role_policy" "node-ebs-policy" {
@@ -95,6 +115,12 @@ data "template_file" "datastore-policy" {
   }
 }
 
+resource "aws_iam_user_policy" "user-datastore-policy" {
+  name = "${var.openshift["domain"]}-user-datastore-policy"
+  policy = "${data.template_file.datastore-policy.rendered}"
+  user = "${aws_iam_user.node-user.name}"
+}
+
 resource "aws_iam_role_policy" "datastore-policy" {
   name = "${var.openshift["domain"]}-openshift-datastore-policy"
   policy = "${data.template_file.datastore-policy.rendered}"
@@ -107,6 +133,12 @@ data "template_file" "route53_policy" {
   vars {
     zone_id = "${var.vpc_conf["zone_id"]}"
   }
+}
+
+resource "aws_iam_user_policy" "user-route53-policy" {
+  name = "${var.openshift["domain"]}-user-route53-policy"
+  policy = "${data.template_file.route53_policy.rendered}"
+  user = "${aws_iam_user.node-user.name}"
 }
 
 resource "aws_iam_role_policy" "route53" {
@@ -127,6 +159,12 @@ data "template_file" "role-kms" {
     aws_account_id = "${var.aws_conf["account_id"]}"
     ebs_kms_arn = "${aws_kms_key.ebs.arn}"
   }
+}
+
+resource "aws_iam_user_policy" "user-kms-policy" {
+  name = "${var.openshift["domain"]}-user-kms-policy"
+  policy = "${data.template_file.role-kms.rendered}"
+  user = "${aws_iam_user.node-user.name}"
 }
 
 resource "aws_iam_role_policy" "role-kms-policy" {

@@ -5,11 +5,11 @@ package_upgrade: true
 
 write_files:
 - path: /etc/sudoers.d/99-centos-cloud-init-requiretty
-  permissions: 440
+  permissions: '0440'
   content: |
     Defaults:centos !requiretty
 - path: /etc/aws/aws.conf
-  permissions: 644
+  permissions: '0644'
   content: |
     [Global]
     Zone = ${aws_region}
@@ -22,10 +22,14 @@ packages:
 - git
 - docker
 - NetworkManager
+- gcc
+- python-devel
+- openssl-devel
 
 runcmd:
+- echo -e '${ssh_key}' > /root/.ssh/id_rsa && chmod 400 /root/.ssh/id_rsa
 - yum install -y python-pip jq
-- pip install --upgrade pip awscli
+- pip install --upgrade pip awscli ansible==2.2.0
 - curl -fsSL "${openshift_url}" | tar -xzf - -C /usr/local/bin --strip-components 1
 - >
   echo '{
@@ -43,6 +47,21 @@ runcmd:
     }]
   }' > /tmp/route53_update.json &&
   aws route53 change-resource-record-sets --hosted-zone-id ${dns_zone_id} --change-batch file:///tmp/route53_update.json
+- git clone -b ${ansible_repo_branch} --recursive ${ansible_repo} /root/openshift-ansible
+- >
+  cd /root/openshift-ansible &&
+  ansible-playbook openshift.yml -D
+  -e cluster_id='${cluster_id}'
+  -e cluster_env='${cluster_env}'
+  -e openshift_release='${openshift_version}'
+  -e openshift_domain='${openshift_domain}'
+  -e aws_region='${aws_region}'
+  -e github_orgs='${github_org}'
+  -e github_client_id='${github_client_id}'
+  -e github_client_secret='${github_client_secret}'
+  -e aws_access_key='${aws_access_key}'
+  -e aws_secret_key='${aws_secret_key}'
+  --tags 'always' --tags 'master'
 - systemctl enable NetworkManager
 - systemctl start NetworkManager
 

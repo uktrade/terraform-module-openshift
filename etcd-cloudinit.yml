@@ -21,7 +21,6 @@ packages:
 - epel-release
 - git
 - docker
-- NetworkManager
 - gcc
 - python-devel
 - openssl-devel
@@ -29,7 +28,7 @@ packages:
 runcmd:
 - echo -e '${ssh_key}' > /root/.ssh/id_rsa && chmod 400 /root/.ssh/id_rsa
 - yum install -y python-pip jq
-- pip install --upgrade pip awscli ansible==2.2.0
+- pip install --upgrade pip awscli
 - curl -fsSL "${openshift_url}" | tar -xzf - -C /usr/local/bin --strip-components 1
 - >
   echo '{
@@ -61,9 +60,7 @@ runcmd:
   -e github_client_secret='${github_client_secret}'
   -e aws_access_key='${aws_access_key}'
   -e aws_secret_key='${aws_secret_key}'
-  --tags 'always' --tags 'node'
-- systemctl enable NetworkManager
-- systemctl start NetworkManager
+  --tags 'always' --tags 'etcd'
 
 power_state:
   delay: "+30"
