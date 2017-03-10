@@ -2,17 +2,10 @@ resource "aws_security_group" "node" {
   name = "${var.aws_conf["domain"]}-node"
   vpc_id = "${var.vpc_conf["id"]}"
 
-  egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   ingress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
+    from_port = 4789
+    to_port = 4789
+    protocol = "tcp"
     self = true
   }
 
@@ -30,10 +23,17 @@ resource "aws_security_group" "master-node" {
   vpc_id = "${var.vpc_conf["id"]}"
 
   ingress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    security_groups = ["${aws_security_group.master.id}", "${aws_security_group.router.id}"]
+    from_port = 4789
+    to_port = 4789
+    protocol = "tcp"
+    security_groups = ["${aws_security_group.router.id}"]
+  }
+
+  ingress {
+    from_port = 10250
+    to_port = 10250
+    protocol = "tcp"
+    security_groups = ["${aws_security_group.master.id}"]
   }
 
   tags {
