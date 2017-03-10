@@ -61,7 +61,7 @@ runcmd:
   -e github_client_secret='${github_client_secret}'
   -e aws_access_key='${aws_access_key}'
   -e aws_secret_key='${aws_secret_key}'
-  --tags 'always' --tags 'master'
+  --tags 'always' --tags 'master' --tags 'hosted'
 - systemctl enable NetworkManager
 - systemctl start NetworkManager
 
