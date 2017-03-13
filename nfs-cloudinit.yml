@@ -26,6 +26,7 @@ packages:
 - openssl-devel
 
 runcmd:
+- export AWS_DEFAULT_REGION=${aws_region}
 - echo -e '${ssh_key}' > /root/.ssh/id_rsa && chmod 400 /root/.ssh/id_rsa
 - yum install -y python-pip jq
 - pip install --upgrade pip awscli ansible==2.2.0
@@ -74,19 +75,22 @@ runcmd:
 - mount /dev/xvdx /exports
 - git clone -b ${ansible_repo_branch} --recursive ${ansible_repo} /root/openshift-ansible
 - >
-  cd /root/openshift-ansible &&
-  ansible-playbook openshift.yml -D
-  -e cluster_id='${cluster_id}'
-  -e cluster_env='${cluster_env}'
-  -e openshift_release='${openshift_version}'
-  -e openshift_domain='${openshift_domain}'
-  -e aws_region='${aws_region}'
-  -e github_orgs='${github_org}'
-  -e github_client_id='${github_client_id}'
-  -e github_client_secret='${github_client_secret}'
-  -e aws_access_key='${aws_access_key}'
-  -e aws_secret_key='${aws_secret_key}'
-  --tags 'always' --tags 'nfs'
+  DesiredCapacity=$(aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names ${openshift_asg} | jq '.AutoScalingGroups[].DesiredCapacity')
+  if [ $(aws ec2 describe-instances --instance-ids "`aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names ${openshift_asg} | jq -r '[.AutoScalingGroups[].Instances[].InstanceId]'`" --filters Name=instance-state-name,Values=running | jq '[.Reservations[].Instances[].InstanceId] | length') -eq $DesiredCapacity ] && [ "$(curl -Lfs http://169.254.169.254/latest/meta-data/instance-id)" = "$(aws ec2 describe-instances --instance-ids "`aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names ${openshift_asg} | jq -r '[.AutoScalingGroups[].Instances[].InstanceId]'`" --filters Name=instance-state-name,Values=running | jq -r '[.Reservations[].Instances[] | {"InstanceId": .InstanceId, "LaunchTime": .LaunchTime | sub(".000"; "") | fromdate}] | sort_by(.LaunchTime) | last .InstanceId')" ]; then
+    cd /root/openshift-ansible &&
+    ansible-playbook openshift.yml -D
+    -e cluster_id='${cluster_id}'
+    -e cluster_env='${cluster_env}'
+    -e openshift_release='${openshift_version}'
+    -e openshift_domain='${openshift_domain}'
+    -e aws_region='${aws_region}'
+    -e github_orgs='${github_org}'
+    -e github_client_id='${github_client_id}'
+    -e github_client_secret='${github_client_secret}'
+    -e aws_access_key='${aws_access_key}'
+    -e aws_secret_key='${aws_secret_key}'
+    --tags 'always' --tags 'nfs'
+  fi
 
 power_state:
   delay: "+30"

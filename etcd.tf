@@ -17,6 +17,7 @@ data "template_file" "etcd-cloudinit" {
     aws_access_key = "${aws_iam_access_key.node-user.id}"
     aws_secret_key = "${aws_iam_access_key.node-user.secret}"
     ssh_key = "${replace(file(var.openshift["ssh_key"]), "\n", "\\n")}"
+    openshift_asg = "${var.openshift["domain"]}-master"
   }
 }
 
