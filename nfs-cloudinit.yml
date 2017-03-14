@@ -51,7 +51,7 @@ runcmd:
         {
           "Action": "UPSERT",
           "ResourceRecordSet": {
-            "Name": "nas.${cluster_id}",
+            "Name": "nas.${openshift_domain}",
             "Type": "A",
             "TTL": 60,
             "ResourceRecords": [{
