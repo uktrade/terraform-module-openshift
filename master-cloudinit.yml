@@ -29,6 +29,7 @@ packages:
 
 runcmd:
 - systemctl enable NetworkManager && systemctl start NetworkManager && sleep 10
+- systemctl start iptables.service && iptables -F && iptables-save > /etc/sysconfig/iptables && systemctl restart iptables.service
 - export AWS_DEFAULT_REGION=${aws_region}
 - echo -e '${ssh_key}' > /root/.ssh/id_rsa && chmod 400 /root/.ssh/id_rsa
 - yum install -y python-pip jq
@@ -64,7 +65,7 @@ runcmd:
     -e github_client_id='${github_client_id}' \
     -e github_client_secret='${github_client_secret}' \
     -e aws_access_key='${aws_access_key}' \
-    -e aws_secret_key='${aws_secret_key}' 
+    -e aws_secret_key='${aws_secret_key}'
   fi
 
 power_state:

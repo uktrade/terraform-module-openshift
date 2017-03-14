@@ -27,6 +27,7 @@ packages:
 - iptables-services
 
 runcmd:
+- systemctl start iptables.service && iptables -F && iptables-save > /etc/sysconfig/iptables && systemctl restart iptables.service
 - export AWS_DEFAULT_REGION=${aws_region}
 - echo -e '${ssh_key}' > /root/.ssh/id_rsa && chmod 400 /root/.ssh/id_rsa
 - yum install -y python-pip jq
