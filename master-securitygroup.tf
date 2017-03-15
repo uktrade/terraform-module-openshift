@@ -24,15 +24,8 @@ resource "aws_security_group" "node-master" {
 
   ingress {
     from_port = 0
-    to_port = 8053
-    protocol = "tcp"
-    security_groups = ["${aws_security_group.node.id}", "${aws_security_group.router.id}"]
-  }
-
-  ingress {
-    from_port = 0
-    to_port = 8053
-    protocol = "udp"
+    to_port = 0
+    protocol = "-1"
     security_groups = ["${aws_security_group.node.id}", "${aws_security_group.router.id}"]
   }
 

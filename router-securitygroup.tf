@@ -3,9 +3,9 @@ resource "aws_security_group" "router" {
   vpc_id = "${var.vpc_conf["id"]}"
 
   ingress {
-    from_port = 4789
-    to_port = 4789
-    protocol = "tcp"
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
     self = true
   }
 
@@ -23,17 +23,10 @@ resource "aws_security_group" "node-router" {
   vpc_id = "${var.vpc_conf["id"]}"
 
   ingress {
-    from_port = 4789
-    to_port = 4789
-    protocol = "tcp"
-    security_groups = ["${aws_security_group.router.id}"]
-  }
-
-  ingress {
-    from_port = 10250
-    to_port = 10250
-    protocol = "tcp"
-    security_groups = ["${aws_security_group.master.id}"]
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    security_groups = ["${aws_security_group.master.id}", "${aws_security_group.node.id}"]
   }
 
   tags {
