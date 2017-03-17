@@ -64,7 +64,6 @@ runcmd:
   }' > /tmp/route53_update.json &&
   aws route53 change-resource-record-sets --hosted-zone-id ${dns_zone_id} --change-batch file:///tmp/route53_update.json
 - mkdir -p /exports
-- export AWS_DEFAULT_REGION=$(curl -Lfs http://169.254.169.254/latest/dynamic/instance-identity/document|grep region|awk -F\" '{print $4}')
 - AWS_AZ=$(curl -Lfs http://169.254.169.254/latest/meta-data/placement/availability-zone)
 - INSTANCE_ID=$(curl -Lfs http://169.254.169.254/latest/meta-data/instance-id)
 - NFS_EBS_VOLUME=$(aws ec2 describe-volumes --filters Name=status,Values=available,Name=tag:Name,Values=${cluster_id}-nfs,Name=tag:clusterid,Values=${cluster_id},Name=tag:environment,Values=${cluster_env},Name=tag:host-type,Values=nfs --query 'Volumes[?AvailabilityZone==`'"$AWS_AZ"'`]' | jq -r '.[].VolumeId')
