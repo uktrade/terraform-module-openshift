@@ -25,6 +25,7 @@ data "template_file" "nfs-cloudinit" {
     aws_secret_key = "${aws_iam_access_key.node-user.secret}"
     ssh_key = "${replace(file(var.openshift["ssh_key"]), "\n", "\\n")}"
     openshift_asg = "${var.openshift["domain"]}-nfs"
+    ebs = "${aws_ebs_volume.nfs.id}"
   }
 }
 

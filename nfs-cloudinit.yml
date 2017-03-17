@@ -63,14 +63,11 @@ runcmd:
     ]
   }' > /tmp/route53_update.json &&
   aws route53 change-resource-record-sets --hosted-zone-id ${dns_zone_id} --change-batch file:///tmp/route53_update.json
-- mkdir -p /exports
-- AWS_AZ=$(curl -Lfs http://169.254.169.254/latest/meta-data/placement/availability-zone)
 - INSTANCE_ID=$(curl -Lfs http://169.254.169.254/latest/meta-data/instance-id)
-- NFS_EBS_VOLUME=$(aws ec2 describe-volumes --filters Name=status,Values=available,Name=tag:Name,Values=${cluster_id}-nfs,Name=tag:clusterid,Values=${cluster_id},Name=tag:environment,Values=${cluster_env},Name=tag:host-type,Values=nfs --query 'Volumes[?AvailabilityZone==`'"$AWS_AZ"'`]' | jq -r '.[].VolumeId')
+- mkdir -p /exports
+- aws ec2 attach-volume --instance-id $INSTANCE_ID --volume-id ${ebs} --device /dev/xvdx
 - >
-  [ $(grep -c -E vol-[0-9a-z]\{17\} <<< $NFS_EBS_VOLUME) = 1 ] && aws ec2 attach-volume --instance-id $INSTANCE_ID --volume-id $NFS_EBS_VOLUME --device /dev/xvdx
-- >
-  while [ "$(aws ec2 describe-volumes --volume-ids $NFS_EBS_VOLUME | jq -r '.Volumes[].Attachments[] | select(.State == "attached") .InstanceId')" != "$INSTANCE_ID" ]; do
+  while [ "$(aws ec2 describe-volumes --volume-ids ${ebs} | jq -r '.Volumes[].Attachments[] | select(.State == "attached") .InstanceId')" != "$INSTANCE_ID" ]; do
     sleep 10
   done
 - mount /dev/xvdx /exports
