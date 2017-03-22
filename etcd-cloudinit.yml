@@ -64,8 +64,7 @@ runcmd:
     -e github_client_id='${github_client_id}' \
     -e github_client_secret='${github_client_secret}' \
     -e aws_access_key='${aws_access_key}' \
-    -e aws_secret_key='${aws_secret_key}' \
-    --tags 'always' --tags 'etcd'
+    -e aws_secret_key='${aws_secret_key}'
   fi
 
 power_state:
