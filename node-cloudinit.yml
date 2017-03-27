@@ -33,7 +33,7 @@ runcmd:
 - export AWS_DEFAULT_REGION=${aws_region}
 - echo -e '${ssh_key}' > /root/.ssh/id_rsa && chmod 400 /root/.ssh/id_rsa
 - yum install -y python-pip jq
-- pip install --upgrade pip awscli ansible==2.2.0
+- pip install --upgrade pip awscli boto==2.46.1 ansible==2.2.0
 - curl -fsSL "${openshift_url}" | tar -xzf - -C /usr/local/bin --strip-components 1
 - >
   echo '{
