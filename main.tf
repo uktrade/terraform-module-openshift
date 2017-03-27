@@ -19,6 +19,13 @@ variable "subnet-type" {
   }
 }
 
+variable "public_ip" {
+  default = {
+    "true" = "false"
+    "false" = "true"
+  }
+}
+
 data "aws_ami" "default" {
   most_recent = true
   name_regex = "CentOS Linux 7 x86_64 HVM EBS"

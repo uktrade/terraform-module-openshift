@@ -39,7 +39,7 @@ resource "aws_launch_configuration" "etcd" {
     delete_on_termination = false
   }
   user_data = "${data.template_file.etcd-cloudinit.rendered}"
-  associate_public_ip_address = "${var.openshift["internal"]}"
+  associate_public_ip_address = "${lookup(var.public_ip, var.openshift["internal"])}"
 
   lifecycle {
     create_before_destroy = true
