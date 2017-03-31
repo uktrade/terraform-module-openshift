@@ -47,7 +47,7 @@ resource "aws_launch_configuration" "router" {
 }
 
 resource "aws_autoscaling_group" "router" {
-  name_prefix = "${var.openshift["domain"]}-router"
+  name = "${var.openshift["domain"]}-router"
   launch_configuration = "${aws_launch_configuration.router.name}"
   vpc_zone_identifier = ["${split(",", var.vpc_conf[lookup(var.subnet-type, var.openshift["internal"])])}"]
   min_size = "${length(split(",", var.vpc_conf["availability_zones"]))}"

@@ -46,7 +46,7 @@ resource "aws_launch_configuration" "node" {
 }
 
 resource "aws_autoscaling_group" "node" {
-  name_prefix = "${var.openshift["domain"]}-node"
+  name = "${var.openshift["domain"]}-node"
   launch_configuration = "${aws_launch_configuration.node.name}"
   vpc_zone_identifier = ["${split(",", var.vpc_conf[lookup(var.subnet-type, var.openshift["internal"])])}"]
   min_size = "${var.openshift["node_capacity_min"]}"

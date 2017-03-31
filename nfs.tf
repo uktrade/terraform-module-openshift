@@ -95,7 +95,7 @@ resource "aws_launch_configuration" "nfs" {
 }
 
 resource "aws_autoscaling_group" "nfs" {
-  name_prefix = "${var.openshift["domain"]}-nfs"
+  name = "${var.openshift["domain"]}-nfs"
   launch_configuration = "${aws_launch_configuration.nfs.name}"
   vpc_zone_identifier = ["${data.aws_subnet.nfs_az.id}"]
   min_size = 1
