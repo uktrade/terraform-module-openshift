@@ -47,7 +47,7 @@ resource "aws_launch_configuration" "etcd" {
 }
 
 resource "aws_autoscaling_group" "etcd" {
-  name = "${var.openshift["domain"]}-etcd"
+  name_prefix = "${var.openshift["domain"]}-etcd"
   launch_configuration = "${aws_launch_configuration.etcd.name}"
   vpc_zone_identifier = ["${split(",", var.vpc_conf[lookup(var.subnet-type, var.openshift["internal"])])}"]
   min_size = "${var.openshift["master_capacity_min"]}"
