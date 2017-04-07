@@ -1,5 +1,5 @@
 data "template_file" "node-compute-cloudinit" {
-  template = "${file("${path.module}/node-cloudinit.yml")}"
+  template = "${file("${path.module}/node-compute-cloudinit.yml")}"
 
   vars {
     openshift_url = "${var.openshift["url"]}"
@@ -18,6 +18,7 @@ data "template_file" "node-compute-cloudinit" {
     aws_secret_key = "${aws_iam_access_key.node-user.secret}"
     ssh_key = "${replace(file(var.openshift["ssh_key"]), "\n", "\\n")}"
     openshift_asg = "${var.openshift["domain"]}-node-compute"
+    s3_endpoint = "${join(" ", split(",", var.vpc_conf["s3_endpoint"]))}"
   }
 }
 
@@ -28,7 +29,7 @@ resource "aws_launch_configuration" "node-compute" {
   key_name = "${var.aws_conf["key_name"]}"
   iam_instance_profile = "${aws_iam_instance_profile.node-compute-profile.id}"
   security_groups = [
-    "${aws_security_group.node-compute.id}",
+    "${var.vpc_conf["security_group"]}",
     "${aws_security_group.node.id}",
     "${aws_security_group.master-node.id}"
   ]
