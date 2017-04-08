@@ -29,6 +29,15 @@ resource "aws_s3_bucket" "datastore-input" {
     bucket = "input.${var.openshift["domain"]}"
     acl = "private"
 
+    lifecycle_rule {
+      id = "6-months-cleanup"
+      prefix = ""
+      enabled = true
+      expiration {
+        days = 180
+      }
+    }
+
     tags {
         Name = "input.${var.openshift["domain"]}"
         Stack = "${var.openshift["domain"]}"
