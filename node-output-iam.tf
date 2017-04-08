@@ -30,10 +30,12 @@ resource "aws_s3_bucket" "datastore-output" {
     acl = "private"
 
     lifecycle_rule {
-      id = "6-months-cleanup"
       prefix = ""
       enabled = true
       expiration {
+        days = 180
+      }
+      noncurrent_version_expiration {
         days = 180
       }
     }
