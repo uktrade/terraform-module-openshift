@@ -36,3 +36,31 @@ resource "aws_iam_role_policy" "compute-kms-policy" {
   policy = "${data.template_file.role-kms.rendered}"
   role = "${aws_iam_role.node-compute-role.id}"
 }
+
+data "template_file" "datastore-compute-input-policy" {
+  template = "${file("${path.module}/policies/s3-ro-policy.json")}"
+
+  vars {
+    s3 = "${aws_s3_bucket.datastore-input.id}"
+  }
+}
+
+resource "aws_iam_role_policy" "datastore-compute-input-policy" {
+  name = "${var.openshift["domain"]}-input-datastore-policy"
+  policy = "${data.template_file.datastore-compute-input-policy.rendered}"
+  role = "${aws_iam_role.node-compute-role.id}"
+}
+
+data "template_file" "datastore-compute-output-policy" {
+  template = "${file("${path.module}/policies/s3-policy.json")}"
+
+  vars {
+    s3 = "${aws_s3_bucket.datastore-output.id}"
+  }
+}
+
+resource "aws_iam_role_policy" "datastore-compute-output-policy" {
+  name = "${var.openshift["domain"]}-output-datastore-policy"
+  policy = "${data.template_file.datastore-compute-output-policy.rendered}"
+  role = "${aws_iam_role.node-compute-role.id}"
+}
