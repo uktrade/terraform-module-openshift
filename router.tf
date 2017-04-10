@@ -127,6 +127,22 @@ resource "aws_autoscaling_policy" "router" {
   }
 }
 
+resource "aws_cloudwatch_metric_alarm" "router" {
+  alarm_name = "${var.openshift["domain"]}-router"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods = "2"
+  metric_name = "CPUUtilization"
+  namespace = "AWS/EC2"
+  period = "120"
+  statistic = "Average"
+  threshold = "80"
+
+  dimensions {
+    AutoScalingGroupName = "${aws_autoscaling_group.router.name}"
+  }
+  alarm_actions = ["${aws_autoscaling_policy.router.arn}"]
+}
+
 resource "aws_route53_record" "router" {
    zone_id = "${var.vpc_conf["zone_id"]}"
    name = "*.${var.openshift["apps_domain"]}"
