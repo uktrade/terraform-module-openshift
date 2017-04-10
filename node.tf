@@ -111,13 +111,8 @@ resource "aws_autoscaling_policy" "node" {
   metric_aggregation_type = "Maximum"
   policy_type = "StepScaling"
   step_adjustment {
-    metric_interval_lower_bound = 3.0
-    scaling_adjustment = 2
-  }
-  step_adjustment {
     metric_interval_lower_bound = 2.0
-    metric_interval_upper_bound = 3.0
-    scaling_adjustment = 2
+    scaling_adjustment = 1
   }
   step_adjustment {
     metric_interval_lower_bound = 1.0
@@ -128,4 +123,20 @@ resource "aws_autoscaling_policy" "node" {
   lifecycle {
     create_before_destroy = true
   }
+}
+
+resource "aws_cloudwatch_metric_alarm" "node" {
+  alarm_name = "${var.openshift["domain"]}-node"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods = "2"
+  metric_name = "CPUUtilization"
+  namespace = "AWS/EC2"
+  period = "120"
+  statistic = "Average"
+  threshold = "80"
+
+  dimensions {
+    AutoScalingGroupName = "${aws_autoscaling_group.node.name}"
+  }
+  alarm_actions = ["${aws_autoscaling_policy.node.arn}"]
 }

@@ -113,13 +113,8 @@ resource "aws_autoscaling_policy" "router" {
   metric_aggregation_type = "Maximum"
   policy_type = "StepScaling"
   step_adjustment {
-    metric_interval_lower_bound = 3.0
-    scaling_adjustment = 2
-  }
-  step_adjustment {
     metric_interval_lower_bound = 2.0
-    metric_interval_upper_bound = 3.0
-    scaling_adjustment = 2
+    scaling_adjustment = 1
   }
   step_adjustment {
     metric_interval_lower_bound = 1.0
@@ -130,6 +125,21 @@ resource "aws_autoscaling_policy" "router" {
   lifecycle {
     create_before_destroy = true
   }
+}
+
+resource "aws_route53_record" "router" {
+   zone_id = "${var.vpc_conf["zone_id"]}"
+   name = "*.${var.openshift["apps_domain"]}"
+   type = "A"
+   alias {
+     name = "${aws_elb.router.dns_name}"
+     zone_id = "${aws_elb.router.zone_id}"
+     evaluate_target_health = false
+   }
+
+   lifecycle {
+     create_before_destroy = true
+   }
 }
 
 resource "aws_elb" "router" {

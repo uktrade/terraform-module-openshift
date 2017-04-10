@@ -106,32 +106,6 @@ resource "aws_autoscaling_group" "etcd" {
   }
 }
 
-resource "aws_autoscaling_policy" "etcd" {
-  name = "${var.openshift["domain"]}-etcd"
-  autoscaling_group_name = "${aws_autoscaling_group.etcd.name}"
-  adjustment_type = "ChangeInCapacity"
-  metric_aggregation_type = "Maximum"
-  policy_type = "StepScaling"
-  step_adjustment {
-    metric_interval_lower_bound = 3.0
-    scaling_adjustment = 2
-  }
-  step_adjustment {
-    metric_interval_lower_bound = 2.0
-    metric_interval_upper_bound = 3.0
-    scaling_adjustment = 2
-  }
-  step_adjustment {
-    metric_interval_lower_bound = 1.0
-    metric_interval_upper_bound = 2.0
-    scaling_adjustment = -1
-  }
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
 resource "aws_elb" "etcd" {
   name = "${element(split(".", var.openshift["domain"]), 0)}-etcd-elb"
   subnets = ["${split(",", var.vpc_conf[lookup(var.subnet-type, var.openshift["internal"])])}"]
