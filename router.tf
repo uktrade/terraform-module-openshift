@@ -133,7 +133,7 @@ resource "aws_autoscaling_policy" "router" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "router" {
-  alarm_name = "${var.openshift["domain"]}-node-compute"
+  alarm_name = "${var.openshift["domain"]}-router"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods = "2"
   metric_name = "CPUUtilization"
