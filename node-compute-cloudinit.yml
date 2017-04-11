@@ -70,17 +70,17 @@ runcmd:
     --tags 'always' --tags 'node'
   fi
 - >
-  IP_WHITELIST="169.254.169.254 192.30.252.0/22 $(curl -fsSL https://api.fastly.com/public-ip-list | jq -rc '.addresses[]') $(dig +short *.apps.${openshift_domain}) $(dig +short dashboard.${openshift_domain}) ${s3_endpoint}"
-  iptables -A OUTPUT -i lo -j ACCEPT
-  iptables -A OUTPUT -d 10.0.0.0/8 -j ACCEPT
-  iptables -A OUTPUT -d 172.16.0.0/12 -j ACCEPT
-  iptables -A OUTPUT -d 192.168.0.0/16 -j ACCEPT
-  iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
-  iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
+  IP_WHITELIST="169.254.169.254 192.30.252.0/22 $(curl -fsSL https://api.fastly.com/public-ip-list | jq -rc '.addresses[]') $(dig +short *.apps.${openshift_domain}) $(dig +short dashboard.${openshift_domain}) ${s3_endpoint}" &&
+  iptables -A OUTPUT -i lo -j ACCEPT &&
+  iptables -A OUTPUT -d 10.0.0.0/8 -j ACCEPT &&
+  iptables -A OUTPUT -d 172.16.0.0/12 -j ACCEPT &&
+  iptables -A OUTPUT -d 192.168.0.0/16 -j ACCEPT &&
+  iptables -A OUTPUT -p udp --dport 53 -j ACCEPT &&
+  iptables -A OUTPUT -p udp --dport 123 -j ACCEPT &&
   for I in $IP_WHITELIST; do
     iptables -A OUTPUT -p tcp -d $I -m multiport --dport 80,443 -j ACCEPT
-  done
-  iptables -A OUTPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+  done &&
+  iptables -A OUTPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT &&
   iptables -A OUTPUT -j DROP
 
 power_state:
