@@ -18,7 +18,7 @@ data "template_file" "node-compute-cloudinit" {
     aws_secret_key = "${aws_iam_access_key.node-user.secret}"
     ssh_key = "${replace(file(var.openshift["ssh_key"]), "\n", "\\n")}"
     openshift_asg = "${var.openshift["domain"]}-node-compute"
-    s3_endpoint = "${join(" ", split(",", var.vpc_conf["s3_endpoint"]))}"
+    vpc_endpoint = "${var.vpc_conf["s3_endpoint"]}"
   }
 }
 
