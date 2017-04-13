@@ -18,7 +18,7 @@ resource "aws_iam_role_policy" "node-compute-ebs-policy" {
 resource "aws_iam_instance_profile" "node-compute-profile" {
   name = "${var.openshift["domain"]}-compute-profile"
   path = "/"
-  roles = ["${aws_iam_role.node-compute-role.name}"]
+  role = "${aws_iam_role.node-compute-role.name}"
 
   lifecycle {
     create_before_destroy = true

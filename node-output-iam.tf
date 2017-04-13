@@ -18,7 +18,7 @@ resource "aws_iam_role_policy" "node-output-ebs-policy" {
 resource "aws_iam_instance_profile" "node-output-profile" {
   name = "${var.openshift["domain"]}-output-profile"
   path = "/"
-  roles = ["${aws_iam_role.node-output-role.name}"]
+  role = "${aws_iam_role.node-output-role.name}"
 
   lifecycle {
     create_before_destroy = true
