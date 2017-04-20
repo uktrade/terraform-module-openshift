@@ -47,7 +47,7 @@ resource "aws_s3_bucket" "datastore-input" {
 }
 
 data "template_file" "datastore-input-policy" {
-  template = "${file("${path.module}/policies/s3-policy.json")}"
+  template = "${file("${path.module}/policies/s3-rw-policy.json")}"
 
   vars {
     s3 = "${aws_s3_bucket.datastore-input.id}"

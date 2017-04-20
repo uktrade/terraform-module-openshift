@@ -52,7 +52,7 @@ resource "aws_iam_role_policy" "datastore-compute-input-policy" {
 }
 
 data "template_file" "datastore-compute-output-policy" {
-  template = "${file("${path.module}/policies/s3-policy.json")}"
+  template = "${file("${path.module}/policies/s3-rw-policy.json")}"
 
   vars {
     s3 = "${aws_s3_bucket.datastore-output.id}"

@@ -47,7 +47,7 @@ resource "aws_s3_bucket" "datastore-output" {
 }
 
 data "template_file" "datastore-output-policy" {
-  template = "${file("${path.module}/policies/s3-policy.json")}"
+  template = "${file("${path.module}/policies/s3-ro-policy.json")}"
 
   vars {
     s3 = "${aws_s3_bucket.datastore-output.id}"
