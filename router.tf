@@ -143,21 +143,6 @@ resource "aws_cloudwatch_metric_alarm" "router" {
   alarm_actions = ["${aws_autoscaling_policy.router.arn}"]
 }
 
-resource "aws_route53_record" "router" {
-   zone_id = "${var.vpc_conf["zone_id"]}"
-   name = "*.${var.openshift["apps_domain"]}"
-   type = "A"
-   alias {
-     name = "${aws_elb.router.dns_name}"
-     zone_id = "${aws_elb.router.zone_id}"
-     evaluate_target_health = false
-   }
-
-   lifecycle {
-     create_before_destroy = true
-   }
-}
-
 resource "aws_elb" "router" {
   name = "${element(split(".", var.openshift["domain"]), 0)}-router-elb"
   subnets = ["${split(",", var.vpc_conf[lookup(var.subnet-type, var.openshift["internal"])])}"]
