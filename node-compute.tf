@@ -31,6 +31,7 @@ resource "aws_launch_configuration" "node-compute" {
   security_groups = [
     "${var.vpc_conf["security_group"]}",
     "${aws_security_group.node.id}",
+    "${aws_security_group.node-compute.id}",
     "${aws_security_group.master-node.id}"
   ]
   root_block_device {

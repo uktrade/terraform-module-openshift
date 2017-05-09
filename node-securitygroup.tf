@@ -18,6 +18,19 @@ resource "aws_security_group" "node" {
   }
 }
 
+resource "aws_security_group" "node-compute" {
+  name = "${var.aws_conf["domain"]}-compute"
+  vpc_id = "${var.vpc_conf["id"]}"
+
+  tags {
+    Name = "${var.aws_conf["domain"]}-compute"
+    Stack = "${var.aws_conf["domain"]}"
+  }
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 resource "aws_security_group" "master-node" {
   name = "${var.aws_conf["domain"]}-master-node"
   vpc_id = "${var.vpc_conf["id"]}"
