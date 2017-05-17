@@ -12,6 +12,7 @@ data "template_file" "master-cloudinit" {
     openshift_version = "${var.openshift["version"]}"
     openshift_domain = "${var.openshift["domain"]}"
     github_org = "${var.openshift["github_org"]}"
+    github_team = "${var.openshift["github_team"]}"
     github_client_id = "${var.openshift["github_client_id"]}"
     github_client_secret = "${var.openshift["github_client_secret"]}"
     aws_access_key = "${aws_iam_access_key.node-user.id}"
