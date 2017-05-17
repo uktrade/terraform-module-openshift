@@ -83,7 +83,6 @@ runcmd:
     -e openshift_domain='${openshift_domain}' \
     -e aws_region='${aws_region}' \
     -e github_orgs='${github_org}' \
-    -e github_teams='${github_team}' \
     -e github_client_id='${github_client_id}' \
     -e github_client_secret='${github_client_secret}' \
     -e aws_access_key='${aws_access_key}' \
