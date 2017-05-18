@@ -30,6 +30,7 @@ resource "aws_launch_configuration" "node-input" {
   security_groups = [
     "${var.vpc_conf["security_group"]}",
     "${aws_security_group.node.id}",
+    "${aws_security_group.node-input.id}",
     "${aws_security_group.master-node.id}"
   ]
   root_block_device {

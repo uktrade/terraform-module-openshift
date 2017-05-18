@@ -31,6 +31,19 @@ resource "aws_security_group" "node-compute" {
   }
 }
 
+resource "aws_security_group" "node-input" {
+  name = "${var.aws_conf["domain"]}-input"
+  vpc_id = "${var.vpc_conf["id"]}"
+
+  tags {
+    Name = "${var.aws_conf["domain"]}-input"
+    Stack = "${var.aws_conf["domain"]}"
+  }
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 resource "aws_security_group" "node-output" {
   name = "${var.aws_conf["domain"]}-output"
   vpc_id = "${var.vpc_conf["id"]}"
