@@ -26,6 +26,7 @@ packages:
 - python-devel
 - openssl-devel
 - iptables-services
+- java-1.8.0-openjdk-headless
 
 runcmd:
 - systemctl enable NetworkManager && systemctl start NetworkManager && sleep 10
