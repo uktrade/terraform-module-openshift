@@ -51,7 +51,7 @@ resource "aws_autoscaling_group" "etcd" {
   launch_configuration = "${aws_launch_configuration.etcd.name}"
   vpc_zone_identifier = ["${split(",", var.vpc_conf[lookup(var.subnet-type, var.openshift["internal"])])}"]
   min_size = 3
-  max_size = "${(length(split(",", var.vpc_conf["availability_zones"])) * 2) + signum(length(split(",", var.vpc_conf["availability_zones"])) % 2 + 1)}"
+  max_size = "${length(split(",", var.vpc_conf["availability_zones"])) * 2 + 1}"
   desired_capacity = 3
   wait_for_capacity_timeout = 0
   load_balancers = ["${aws_elb.etcd.id}"]
