@@ -24,7 +24,7 @@ data "template_file" "infra-cloudinit" {
 resource "aws_launch_configuration" "infra" {
   name_prefix = "${var.aws_conf["domain"]}-infra-"
   image_id = "${data.aws_ami.default.id}"
-  instance_type = "${var.openshift["compute_instance_type"]}"
+  instance_type = "${var.openshift["infra_instance_type"]}"
   key_name = "${var.aws_conf["key_name"]}"
   iam_instance_profile = "${aws_iam_instance_profile.node-profile.id}"
   security_groups = [
