@@ -29,10 +29,7 @@ resource "aws_launch_configuration" "node-compute" {
   key_name = "${var.aws_conf["key_name"]}"
   iam_instance_profile = "${aws_iam_instance_profile.node-compute-profile.id}"
   security_groups = [
-    "${var.vpc_conf["security_group"]}",
-    "${aws_security_group.node.id}",
-    "${aws_security_group.node-compute.id}",
-    "${aws_security_group.master-node.id}"
+    "${aws_security_group.node-compute.id}"
   ]
   root_block_device {
     volume_type = "gp2"
