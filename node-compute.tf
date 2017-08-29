@@ -29,6 +29,7 @@ resource "aws_launch_configuration" "node-compute" {
   key_name = "${var.aws_conf["key_name"]}"
   iam_instance_profile = "${aws_iam_instance_profile.node-compute-profile.id}"
   security_groups = [
+    "${aws_security_group.node.id}",
     "${aws_security_group.node-compute.id}"
   ]
   root_block_device {
