@@ -9,6 +9,13 @@ resource "aws_security_group" "node" {
     self = true
   }
 
+  ingress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    security_groups = ["${aws_security_group.node-compute.id}"]
+  }
+
   tags {
     Name = "${var.aws_conf["domain"]}-node"
     Stack = "${var.aws_conf["domain"]}"
