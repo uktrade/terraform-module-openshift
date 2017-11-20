@@ -40,6 +40,11 @@ resource "aws_s3_bucket" "datastore-output" {
       }
     }
 
+    logging {
+      target_bucket = "${aws_s3_bucket.logging.id}"
+      target_prefix = "S3/output.${var.openshift["domain"]}"
+    }
+
     tags {
         Name = "output.${var.openshift["domain"]}"
         Stack = "${var.openshift["domain"]}"

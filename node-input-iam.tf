@@ -40,6 +40,11 @@ resource "aws_s3_bucket" "datastore-input" {
       }
     }
 
+    logging {
+      target_bucket = "${aws_s3_bucket.logging.id}"
+      target_prefix = "S3/input.${var.openshift["domain"]}"
+    }
+
     tags {
         Name = "input.${var.openshift["domain"]}"
         Stack = "${var.openshift["domain"]}"

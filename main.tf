@@ -104,9 +104,24 @@ resource "aws_iam_instance_profile" "node-profile" {
   }
 }
 
+resource "aws_s3_bucket" "logging" {
+    bucket = "logs.${var.openshift["domain"]}"
+    acl = "private"
+
+    tags {
+        Name = "logs.${var.openshift["domain"]}"
+        Stack = "${var.openshift["domain"]}"
+    }
+}
+
 resource "aws_s3_bucket" "datastore" {
     bucket = "datastore.${var.openshift["domain"]}"
     acl = "private"
+
+    logging {
+      target_bucket = "${aws_s3_bucket.logging.id}"
+      target_prefix = "S3/datastore.${var.openshift["domain"]}"
+    }
 
     tags {
         Name = "datastore.${var.openshift["domain"]}"
