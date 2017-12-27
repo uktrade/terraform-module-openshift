@@ -21,7 +21,7 @@ data "template_file" "node-cloudinit" {
   }
 }
 
-resource "aws_launch_configuration" "node" {
+resource "aws_launch_configuration" "node-input" {
   name_prefix = "${var.aws_conf["domain"]}-node-"
   image_id = "${data.aws_ami.default.id}"
   instance_type = "${var.openshift["compute_instance_type"]}"
@@ -45,7 +45,7 @@ resource "aws_launch_configuration" "node" {
   }
 }
 
-resource "aws_autoscaling_group" "node" {
+resource "aws_autoscaling_group" "node-input" {
   name = "${var.openshift["domain"]}-node"
   launch_configuration = "${aws_launch_configuration.node.name}"
   vpc_zone_identifier = ["${split(",", var.vpc_conf[lookup(var.subnet-type, var.openshift["internal"])])}"]
@@ -104,7 +104,7 @@ resource "aws_autoscaling_group" "node" {
   }
 }
 
-resource "aws_autoscaling_policy" "node" {
+resource "aws_autoscaling_policy" "node-input" {
   name = "${var.openshift["domain"]}-node"
   autoscaling_group_name = "${aws_autoscaling_group.node.name}"
   adjustment_type = "ChangeInCapacity"
@@ -125,7 +125,7 @@ resource "aws_autoscaling_policy" "node" {
   }
 }
 
-resource "aws_cloudwatch_metric_alarm" "node" {
+resource "aws_cloudwatch_metric_alarm" "node-input" {
   alarm_name = "${var.openshift["domain"]}-node"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods = "2"
