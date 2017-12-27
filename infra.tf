@@ -126,7 +126,7 @@ resource "aws_autoscaling_policy" "infra" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "infra" {
-  alarm_name = "${var.openshift["domain"]}-node"
+  alarm_name = "${var.openshift["domain"]}-infra"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods = "2"
   metric_name = "CPUUtilization"
@@ -136,7 +136,7 @@ resource "aws_cloudwatch_metric_alarm" "infra" {
   threshold = "80"
 
   dimensions {
-    AutoScalingGroupName = "${aws_autoscaling_group.node.name}"
+    AutoScalingGroupName = "${aws_autoscaling_group.infra.name}"
   }
-  alarm_actions = ["${aws_autoscaling_policy.node.arn}"]
+  alarm_actions = ["${aws_autoscaling_policy.infra.arn}"]
 }

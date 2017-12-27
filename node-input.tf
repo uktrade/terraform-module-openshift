@@ -1,4 +1,4 @@
-data "template_file" "node-cloudinit" {
+data "template_file" "node-input-cloudinit" {
   template = "${file("${path.module}/node-cloudinit.yml")}"
 
   vars {
@@ -37,7 +37,7 @@ resource "aws_launch_configuration" "node-input" {
     volume_size = 200
     delete_on_termination = false
   }
-  user_data = "${data.template_file.node-cloudinit.rendered}"
+  user_data = "${data.template_file.node-input-cloudinit.rendered}"
   associate_public_ip_address = "${lookup(var.public_ip, var.openshift["internal"])}"
 
   lifecycle {
