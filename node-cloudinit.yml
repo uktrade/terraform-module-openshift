@@ -26,6 +26,9 @@ packages:
 - python-devel
 - openssl-devel
 - iptables-services
+- pyOpenSSL
+- python-cryptography
+- python-lxml
 
 runcmd:
 - systemctl enable NetworkManager && systemctl start NetworkManager && sleep 10
