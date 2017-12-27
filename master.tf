@@ -51,9 +51,9 @@ resource "aws_autoscaling_group" "master" {
   name = "${var.openshift["domain"]}-master"
   launch_configuration = "${aws_launch_configuration.master.name}"
   vpc_zone_identifier = ["${split(",", var.vpc_conf[lookup(var.subnet-type, var.openshift["internal"])])}"]
-  min_size = "${var.openshift["master_capacity_min"]}"
-  max_size = "${var.openshift["master_capacity_max"]}"
-  desired_capacity = "${var.openshift["master_capacity_min"]}"
+  min_size = "${length(split(",", var.vpc_conf["availability_zones"]))}"
+  max_size = "${length(split(",", var.vpc_conf["availability_zones"])) * 2}"
+  desired_capacity = "${length(split(",", var.vpc_conf["availability_zones"]))}"
   wait_for_capacity_timeout = 0
   load_balancers = [
     "${aws_elb.master.id}",

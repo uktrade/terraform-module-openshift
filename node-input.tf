@@ -1,4 +1,4 @@
-data "template_file" "node-input-cloudinit" {
+data "template_file" "node-cloudinit" {
   template = "${file("${path.module}/node-cloudinit.yml")}"
 
   vars {
@@ -17,20 +17,19 @@ data "template_file" "node-input-cloudinit" {
     aws_access_key = "${aws_iam_access_key.node-user.id}"
     aws_secret_key = "${aws_iam_access_key.node-user.secret}"
     ssh_key = "${replace(file(var.openshift["ssh_key"]), "\n", "\\n")}"
-    openshift_asg = "${var.openshift["domain"]}-node-input"
+    openshift_asg = "${var.openshift["domain"]}-node"
   }
 }
 
-resource "aws_launch_configuration" "node-input" {
-  name_prefix = "${var.aws_conf["domain"]}-node-input-"
+resource "aws_launch_configuration" "node" {
+  name_prefix = "${var.aws_conf["domain"]}-node-"
   image_id = "${data.aws_ami.default.id}"
   instance_type = "${var.openshift["compute_instance_type"]}"
   key_name = "${var.aws_conf["key_name"]}"
-  iam_instance_profile = "${aws_iam_instance_profile.node-input-profile.id}"
+  iam_instance_profile = "${aws_iam_instance_profile.node-profile.id}"
   security_groups = [
     "${var.vpc_conf["security_group"]}",
     "${aws_security_group.node.id}",
-    "${aws_security_group.node-input.id}",
     "${aws_security_group.master-node.id}"
   ]
   root_block_device {
@@ -38,7 +37,7 @@ resource "aws_launch_configuration" "node-input" {
     volume_size = 200
     delete_on_termination = false
   }
-  user_data = "${data.template_file.node-input-cloudinit.rendered}"
+  user_data = "${data.template_file.node-cloudinit.rendered}"
   associate_public_ip_address = "${lookup(var.public_ip, var.openshift["internal"])}"
 
   lifecycle {
@@ -46,9 +45,9 @@ resource "aws_launch_configuration" "node-input" {
   }
 }
 
-resource "aws_autoscaling_group" "node-input" {
-  name = "${var.openshift["domain"]}-node-input"
-  launch_configuration = "${aws_launch_configuration.node-input.name}"
+resource "aws_autoscaling_group" "node" {
+  name = "${var.openshift["domain"]}-node"
+  launch_configuration = "${aws_launch_configuration.node.name}"
   vpc_zone_identifier = ["${split(",", var.vpc_conf[lookup(var.subnet-type, var.openshift["internal"])])}"]
   min_size = "${var.openshift["node_capacity_min"]}"
   max_size = "${var.openshift["node_capacity_max"]}"
@@ -57,7 +56,7 @@ resource "aws_autoscaling_group" "node-input" {
 
   tag {
     key = "Name"
-    value = "${var.openshift["domain"]}-node-input"
+    value = "${var.openshift["domain"]}-node"
     propagate_at_launch = true
   }
   tag {
@@ -100,19 +99,14 @@ resource "aws_autoscaling_group" "node-input" {
     value = "node"
     propagate_at_launch = true
   }
-  tag {
-    key = "process-type"
-    value = "input"
-    propagate_at_launch = true
-  }
   lifecycle {
     create_before_destroy = true
   }
 }
 
-resource "aws_autoscaling_policy" "node-input" {
-  name = "${var.openshift["domain"]}-node-input"
-  autoscaling_group_name = "${aws_autoscaling_group.node-input.name}"
+resource "aws_autoscaling_policy" "node" {
+  name = "${var.openshift["domain"]}-node"
+  autoscaling_group_name = "${aws_autoscaling_group.node.name}"
   adjustment_type = "ChangeInCapacity"
   metric_aggregation_type = "Maximum"
   policy_type = "StepScaling"
@@ -131,8 +125,8 @@ resource "aws_autoscaling_policy" "node-input" {
   }
 }
 
-resource "aws_cloudwatch_metric_alarm" "node-input" {
-  alarm_name = "${var.openshift["domain"]}-node-input"
+resource "aws_cloudwatch_metric_alarm" "node" {
+  alarm_name = "${var.openshift["domain"]}-node"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods = "2"
   metric_name = "CPUUtilization"
@@ -142,7 +136,7 @@ resource "aws_cloudwatch_metric_alarm" "node-input" {
   threshold = "80"
 
   dimensions {
-    AutoScalingGroupName = "${aws_autoscaling_group.node-input.name}"
+    AutoScalingGroupName = "${aws_autoscaling_group.node.name}"
   }
-  alarm_actions = ["${aws_autoscaling_policy.node-input.arn}"]
+  alarm_actions = ["${aws_autoscaling_policy.node.arn}"]
 }
