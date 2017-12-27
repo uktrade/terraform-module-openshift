@@ -26,6 +26,7 @@ packages:
 - python-devel
 - openssl-devel
 - iptables-services
+- java-1.8.0-openjdk-headless
 
 runcmd:
 - systemctl enable NetworkManager && systemctl start NetworkManager && sleep 10
@@ -33,7 +34,7 @@ runcmd:
 - export AWS_DEFAULT_REGION=${aws_region}
 - echo -e '${ssh_key}' > /root/.ssh/id_rsa && chmod 400 /root/.ssh/id_rsa
 - yum install -y python-pip jq
-- pip install --upgrade pip awscli ansible==2.2.0 && pip install --upgrade boto
+- pip install --upgrade pip awscli ansible passlib && pip install --upgrade boto
 - curl -fsSL "${openshift_url}" | tar -xzf - -C /usr/local/bin --strip-components 1
 - >
   echo '{
