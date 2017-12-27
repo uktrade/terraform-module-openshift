@@ -86,7 +86,7 @@ resource "aws_autoscaling_group" "infra" {
   }
   tag {
     key = "sub-host-type"
-    value = "compute"
+    value = "infra"
     propagate_at_launch = true
   }
   tag {
