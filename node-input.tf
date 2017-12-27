@@ -22,7 +22,7 @@ data "template_file" "node-cloudinit" {
 }
 
 resource "aws_launch_configuration" "node-input" {
-  name_prefix = "${var.aws_conf["domain"]}-node-"
+  name_prefix = "${var.aws_conf["domain"]}-node-input-"
   image_id = "${data.aws_ami.default.id}"
   instance_type = "${var.openshift["compute_instance_type"]}"
   key_name = "${var.aws_conf["key_name"]}"
@@ -46,8 +46,8 @@ resource "aws_launch_configuration" "node-input" {
 }
 
 resource "aws_autoscaling_group" "node-input" {
-  name = "${var.openshift["domain"]}-node"
-  launch_configuration = "${aws_launch_configuration.node.name}"
+  name = "${var.openshift["domain"]}-node-input"
+  launch_configuration = "${aws_launch_configuration.node-input.name}"
   vpc_zone_identifier = ["${split(",", var.vpc_conf[lookup(var.subnet-type, var.openshift["internal"])])}"]
   min_size = "${var.openshift["node_capacity_min"]}"
   max_size = "${var.openshift["node_capacity_max"]}"
@@ -106,7 +106,7 @@ resource "aws_autoscaling_group" "node-input" {
 
 resource "aws_autoscaling_policy" "node-input" {
   name = "${var.openshift["domain"]}-node"
-  autoscaling_group_name = "${aws_autoscaling_group.node.name}"
+  autoscaling_group_name = "${aws_autoscaling_group.node-input.name}"
   adjustment_type = "ChangeInCapacity"
   metric_aggregation_type = "Maximum"
   policy_type = "StepScaling"
@@ -126,7 +126,7 @@ resource "aws_autoscaling_policy" "node-input" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "node-input" {
-  alarm_name = "${var.openshift["domain"]}-node"
+  alarm_name = "${var.openshift["domain"]}-node-input"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods = "2"
   metric_name = "CPUUtilization"
@@ -136,7 +136,7 @@ resource "aws_cloudwatch_metric_alarm" "node-input" {
   threshold = "80"
 
   dimensions {
-    AutoScalingGroupName = "${aws_autoscaling_group.node.name}"
+    AutoScalingGroupName = "${aws_autoscaling_group.node-input.name}"
   }
-  alarm_actions = ["${aws_autoscaling_policy.node.arn}"]
+  alarm_actions = ["${aws_autoscaling_policy.node-input.arn}"]
 }
