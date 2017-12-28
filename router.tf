@@ -101,6 +101,11 @@ resource "aws_autoscaling_group" "router" {
     value = "router"
     propagate_at_launch = true
   }
+  tag {
+    key = "process-type"
+    value = "router"
+    propagate_at_launch = true
+  }
   lifecycle {
     create_before_destroy = true
   }
