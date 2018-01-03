@@ -100,6 +100,11 @@ resource "aws_autoscaling_group" "node-input" {
     value = "node"
     propagate_at_launch = true
   }
+  tag {
+    key = "process-type"
+    value = "input"
+    propagate_at_launch = true
+  }
   lifecycle {
     create_before_destroy = true
   }
