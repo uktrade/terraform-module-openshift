@@ -26,7 +26,7 @@ resource "aws_launch_configuration" "node-input" {
   image_id = "${data.aws_ami.default.id}"
   instance_type = "${var.openshift["compute_instance_type"]}"
   key_name = "${var.aws_conf["key_name"]}"
-  iam_instance_profile = "${aws_iam_instance_profile.node-profile.id}"
+  iam_instance_profile = "${aws_iam_instance_profile.node-input-profile.id}"
   security_groups = [
     "${var.vpc_conf["security_group"]}",
     "${aws_security_group.node.id}",
@@ -105,7 +105,7 @@ resource "aws_autoscaling_group" "node-input" {
 }
 
 resource "aws_autoscaling_policy" "node-input" {
-  name = "${var.openshift["domain"]}-node"
+  name = "${var.openshift["domain"]}-node-input"
   autoscaling_group_name = "${aws_autoscaling_group.node-input.name}"
   adjustment_type = "ChangeInCapacity"
   metric_aggregation_type = "Maximum"
