@@ -3,6 +3,13 @@ resource "aws_security_group" "etcd" {
   vpc_id = "${var.vpc_conf["id"]}"
 
   ingress {
+    from_port = 2379
+    to_port = 2379
+    protocol = "tcp"
+    self = true
+  }
+
+  ingress {
     from_port = 2380
     to_port = 2380
     protocol = "tcp"
