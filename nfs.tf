@@ -47,9 +47,8 @@ data "aws_subnet" "nfs_az" {
 
 resource "aws_ebs_volume" "nfs" {
   availability_zone = "${random_shuffle.nfs_az.result.0}"
-  type = "io1"
+  type = "gp2"
   size = 500
-  iops = 20000
   encrypted = true
   kms_key_id = "${aws_kms_key.ebs.arn}"
 
